@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 10000",
-    "start": "nodemon index.js",
-    "swagger-gen": "node swagger.js"
+    "start": "nodemon index.js"
   },
   "engines": {
     "node": ">= 12.0.0"
@@ -24,12 +23,15 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.15",
     "morgan": "^1.10.0",
+    "pg": "^8.6.0",
+    "sequelize": "^6.6.4",
+    "sqlite3": "^5.0.2",
     "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-http": "^2.0.1",
-    "mocha": "^2.4.5",
+    "chai-http": "^4.3.0",
+    "mocha": "^9.0.1",
     "swagger-autogen": "^2.10.0"
   }
 }

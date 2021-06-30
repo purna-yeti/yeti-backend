@@ -4,14 +4,19 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const auth = require("../middleware/auth");
-const User = require("../model/User");
+const sample = require("../middleware/sample");
+const User = require("../models/User");
+const { createProfile, updateProfile, getProfile } = require("../controller/user");
+
+router.post('/profile', auth, createProfile);
+router.put('/profile', auth, updateProfile);
+router.get('/profile', auth, getProfile);
 
 /**
  * @method - POST
  * @param - /signup
  * @description - User SignUp
  */
-
 router.post(
   "/signup",
   [

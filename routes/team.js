@@ -6,7 +6,10 @@ const sample = require("../middleware/sample");
 router.post('/', auth, sample);
 router.put('/', auth, sample);
 router.delete('/', auth, sample);
-router.get('/project_id/:project_id', auth, sample);
-router.get('/user_id/:user_id', auth, sample);
+router.post('/request', auth, sample);
+router.delete('/request', auth, sample);
+router.get('/request', auth, sample);
+router.post('/approve', auth, sample);
+router.post('/disprove', auth, sample)
 
 module.exports = router; 
