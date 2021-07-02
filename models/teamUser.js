@@ -1,5 +1,13 @@
 const teamUser = (sequelize, DataTypes) => {
+    const USER_ROLE = ['OWNER', 'EDITOR', 'MEMBER'];
+    const REQUEST_STATUS = ['PENDING', 'REJECTED', 'SUSPENDED', 'APPROVED'];
+
     const teamUser = sequelize.define('teamUser', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       uuid: {
         type: DataTypes.UUID,
         unique: true,
@@ -26,11 +34,11 @@ const teamUser = (sequelize, DataTypes) => {
         onUpdate: 'cascade',
       },
       userRole: {
-        type: DataTypes.ENUM('OWNER', 'EDITOR', 'MEMBER'),
+        type: DataTypes.ENUM(USER_ROLE),
         defaultValue: 'MEMBER',
       },
       requestStatus: {
-        type: DataTypes.ENUM('PENDING', 'REJECTED', 'SUSPENDED', 'APPROVED'),
+        type: DataTypes.ENUM(REQUEST_STATUS),
         defaultValue: 'PENDING',
       },
       isFavourite: {
@@ -43,6 +51,8 @@ const teamUser = (sequelize, DataTypes) => {
       teamUser.belongsTo(models.Team, { foreignKey: 'teamId'});
       teamUser.belongsTo(models.User, { foreignKey: 'userId'});
     };
+    teamUser.USER_ROLE = USER_ROLE;
+    teamUser.REQUEST_STATUS = REQUEST_STATUS;
   
     return teamUser;
   };

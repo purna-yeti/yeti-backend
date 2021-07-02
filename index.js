@@ -3,9 +3,21 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
 
-const user = require("./routes/user");
+let ENV = 'dev';
+switch(process.env.NODE_ENV) {
+	case 'test':
+	  	require('dotenv').config({ path: './.env_test'})
+	  	break;
+	case 'dev':
+		require('dotenv').config({ path: './.env'})
+		break;
+	default:
+		console.log(`ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
+		require('dotenv').config({ path: './.env'})
+}
+
+// const user = require("./routes/user");
 const user1 = require("./routes/user1");
 const project = require("./routes/project");
 const content = require("./routes/content");
@@ -21,7 +33,6 @@ const { sequelize, models } = require('./models/index');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger-output.json');
-const { create } = require('./models/User');
 
 
 mongoose
@@ -30,8 +41,6 @@ mongoose
 	.catch(err=>{
 		console.log(err);
 	})
-
-
 
 app.use(morgan('dev'));
 app.use(bodyParser.json({limit: '200mb', extended: true}));
@@ -157,11 +166,12 @@ const loadData = async () => {
   };
 
 const port = process.env.PORT || 8000;
-sequelize.sync({force: true}).then(async () => {
+const force = process.env.NODE_ENV === 'test';
+sequelize.sync().then(async () => {
 	console.log("sequelize synced");
-	loadData();
+	// loadData();
 	app.listen(port, () => {
-		console.log(`Console is running on port ${port}`);
+		console.log(`Console is running on port ${port} on env ${process.env.NODE_ENV}`);
 	});
 });
 

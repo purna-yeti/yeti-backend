@@ -1,11 +1,12 @@
 const express = require("express");
 const { check, validationResult } = require("express-validator");
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const sample = require("../middleware/sample");
-const User = require("../models/user1");
+const { models } = require("../models");
+const User = models.User;
 const { createProfile, updateProfile, getProfile } = require("../controller/user");
 
 router.post('/profile', auth, createProfile);
@@ -38,10 +39,10 @@ router.get('/profile', auth, getProfile);
       }
       // console.log("POST /user/signup ", errors);
   
-      const { username, firstname, lastname, email, password } = req.body;
+      const { username, email, password } = req.body;
       try {
         let user = await User.findOne({
-          email
+          where: {email}
         });
         if (user) {
           return res.status(400).json({
@@ -51,8 +52,6 @@ router.get('/profile', auth, getProfile);
   
         user = new User({
           username,
-          firstname,
-          lastname,
           email,
           password
         });
@@ -76,7 +75,7 @@ router.get('/profile', auth, getProfile);
           },
           (err, token) => {
             if (err) throw err;
-            res.status(200).json({
+            res.status(201).json({
               token
             });
           }

@@ -13,12 +13,12 @@ const user = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
-      firstname: {
-        type: DataTypes.STRING
-      },
-      lastname: {
-        type: DataTypes.STRING
-      },
+      // firstname: {
+      //   type: DataTypes.STRING
+      // },
+      // lastname: {
+      //   type: DataTypes.STRING
+      // },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -50,7 +50,7 @@ const user = (sequelize, DataTypes) => {
       User.belongsToMany(models.Content, { through: models.UserContent });
       User.belongsToMany(models.User, { through: models.Friendship, as: 'followed'});
     };
-  
+    
     User.findByLogin = async (login) => {
       let user = await User.findOne({
         where: { username: login },
