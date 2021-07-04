@@ -1,39 +1,38 @@
-const projectContent = (sequelize, DataTypes) => {
-    const projectContent = sequelize.define('projectContent', {
+const contentReply = (sequelize, DataTypes) => {
+    const contentReply = sequelize.define('contentReply', {
       uuid: {
         type: DataTypes.UUID,
         unique: true,
         defaultValue: DataTypes.UUIDV4,
       },
-      contentId: {
+      replyId: {
         type: DataTypes.INTEGER,
         primaryKey: false,
         references: {
-          model: 'content',
+          model: 'contentComments',
           key: 'id'
         },
         onDelete: 'cascade',
         onUpdate: 'cascade',
       },
-      projectId: {
+      commentId: {
         type: DataTypes.INTEGER,
         primaryKey: false,
         references: {
-          model: 'project',
+          model: 'contentComments',
           key: 'id'
         },
         onDelete: 'cascade',
         onUpdate: 'cascade',
-      },
+      }
     });
   
-    projectContent.associate = (models) => {
-      projectContent.belongsTo(models.Content, { foreignKey: 'contentId'});
-      projectContent.belongsTo(models.Project, { foreignKey: 'projectId'});
+    contentReply.associate = (models) => {
+      contentReply.belongsTo(models.ContentComment, { foreignKey: 'replyId'});
     };
   
-    return projectContent;
+    return contentReply;
   };
   
-module.exports = projectContent;
+module.exports = contentReply;
   

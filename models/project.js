@@ -21,10 +21,10 @@ const project = (sequelize, DataTypes) => {
     });
   
     Project.associate = (models) => {
-      Project.belongsToMany(models.User, { through: models.UserProject });
-      Project.belongsTo(models.Team);
-      Project.belongsToMany(models.Content, { through: models.ProjectContent });
+      Project.belongsToMany(models.User, { through: models.ContentStatus });
+      Project.belongsToMany(models.Content, { through: models.ContentStatus });
 
+      Project.belongsTo(models.Team);
     };
   
     return Project;

@@ -4,7 +4,7 @@ const { models, sequelize } = require('../models');
 const Team = models.Team;
 const TeamUser = models.TeamUser;
 const User = models.User;
-const { check, validationResult } = require("express-validator");
+const { check } = require("express-validator");
 
 exports.createTeam = async (req, res) => {
   const prefix = "POST /team";
@@ -97,11 +97,11 @@ exports.deleteTeamRequest = async(req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-exports.getTeamRequests = async(req, res) => {
-  const prefix = "GET /team/request/:id";
+exports.getTeamUsers = async(req, res) => {
+  const prefix = "GET /team/users/:id";
   try {
     await sequelize.transaction(async (t) => {
-      console.log(`${prefix}: get team requests`);
+      console.log(`${prefix}: get team users`);
       let teamUsers = await TeamUser.findAll({
         where: {
           teamId: parseInt(req.params.id),
@@ -123,6 +123,23 @@ exports.getTeamRequests = async(req, res) => {
 }
 
 /**
+ * helper function to decide if the admin is authorized to approved
+ * @param {} admin_id 
+ * @param {*} teamUser 
+ */
+async function authToApprove(admin_id, teamUser) {
+  let adminUser = await TeamUser.findOne({
+    where: {
+      userId: admin_id, 
+      requestStatus: 'APPROVED',
+      teamId: teamUser.teamId,
+    }});
+  return adminUser !== null && 
+  ((adminUser.userRole === 'EDITOR' && teamUser.userRole === 'MEMBER') ||
+    adminUser.userRole === 'OWNER');
+}
+
+/**
  * owner can approve new owners and editors
  * editor can approve new members
  * @param {*} req 
@@ -133,8 +150,20 @@ exports.approveTeamRequest = async(req, res) => {
   try {
     await sequelize.transaction(async (t) => {
       console.log(`${prefix}: approve team request`);
-      let team = await Team.findOne({where: {id: req.params.id}});
-      res.status(200).json(team);
+      let teamUser = await TeamUser.findOne({where: {id: req.body.id}});
+      if (teamUser && await authToApprove(req.user.id, teamUser)) {
+        teamUser.requestStatus = 'APPROVED';
+        await teamUser.save();
+        res.status(201).json(teamUser);
+      } else if (teamUser) {
+        res.status(401).json({
+          msg: "user is not authorized to approve the request",
+        });
+      } else {
+        res.status(404).json({
+          msg: "Team does not exist",
+        });
+      }
     })
   } catch (error) {
     console.log(`${prefix}: ${error}`);

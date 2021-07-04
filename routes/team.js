@@ -10,15 +10,15 @@ router.get('/:id', auth, controller.getTeam);
 router.put('/request', auth, 
     controller.checkSubmitTeamRequest, 
     controller.submitTeamRequest);
-router.delete('/request', auth, controller.deleteTeamRequest);
-router.get('/request/:id', auth, controller.getTeamRequests);
-
+router.get('/users/:id', auth, controller.getTeamUsers);
 router.put('/request/approve', auth, controller.approveTeamRequest);
+
+
 router.put('/request/disprove', auth, controller.disproveTeamRequest);
-
-
 router.put('/', auth, sample);
 router.delete('/', auth, sample);
+router.delete('/request', auth, controller.deleteTeamRequest);
+
 
 
 

@@ -37,9 +37,11 @@ const models = {
   Content: require('./content')(sequelize, Sequelize.DataTypes),
   TeamUser: require('./teamUser')(sequelize, Sequelize.DataTypes),
   UserProject: require('./userProject')(sequelize, Sequelize.DataTypes),
-  UserContent: require('./userContent')(sequelize, Sequelize.DataTypes),
+  ContentVisit: require('./contentVisit')(sequelize, Sequelize.DataTypes),
+  ContentStatus: require('./contentStatus')(sequelize, Sequelize.DataTypes),
   Friendship: require('./friendship')(sequelize, Sequelize.DataTypes),
-  ProjectContent: require('./projectContent')(sequelize, Sequelize.DataTypes),
+  ContentComment: require('./contentComment')(sequelize, Sequelize.DataTypes),
+  ContentReply: require('./contentReply')(sequelize, Sequelize.DataTypes),
 };
 
 models.validate = function(req, res) {

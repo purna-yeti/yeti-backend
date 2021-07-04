@@ -5,7 +5,7 @@ const content = (sequelize, DataTypes) => {
       unique: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    url: {
+    uri: {
       type: DataTypes.STRING,
       unique: true,
       validate: {
@@ -22,12 +22,12 @@ const content = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     }
-  });
+  }
+  );
 
   Content.associate = (models) => {
-    Content.belongsToMany(models.User, { through: models.UserContent });
-    Content.belongsToMany(models.Project, { through: models.ProjectContent });
-
+    Content.belongsToMany(models.User, { through: models.ContentStatus });
+    Content.belongsToMany(models.Project, { through: models.ContentStatus });
   };
 
   return Content;

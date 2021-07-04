@@ -9,7 +9,7 @@ const friendship = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: false,
         references: {
-          model: 'user',
+          model: 'users',
           key: 'id'
         },
         onDelete: 'cascade',
@@ -19,7 +19,7 @@ const friendship = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: false,
         references: {
-          model: 'user',
+          model: 'users',
           key: 'id'
         },
         onDelete: 'cascade',
