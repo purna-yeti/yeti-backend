@@ -12,6 +12,18 @@ const content = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
+    hostname: {
+      type: DataTypes.STRING,
+    },
+    pathname: {
+      type: DataTypes.STRING,
+    },
+    search: {
+      type: DataTypes.STRING,
+    },
+    title: {
+      type: DataTypes.STRING,
+    },
     doc: {
       type: DataTypes.TEXT,
     },

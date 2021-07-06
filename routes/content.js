@@ -15,12 +15,13 @@ router.post('/comment', auth,
   controller.visitContent);
 router.post('/reply', auth, 
   controller.visitContent);
+router.get('/project_id/:project_id', auth, 
+  controller.getProjectContent);
 
 
 router.put('/content_id/:content_id', auth, sample);
 router.delete('/content_id/:content_id', auth, sample);
 router.get('/content_id/:content_id', auth, sample);
-router.get('/project_id/:project_id', auth, sample);
 router.get('/trail', auth, sample);
 
 module.exports = router; 

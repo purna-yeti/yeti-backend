@@ -16,7 +16,11 @@ module.exports = function(req, res, next) {
     req.user = decoded.user;
     next();
   } catch (e) {
-    console.error(e);
-    res.status(500).send({ message: "Invalid Token" });
+    if (e instanceof jwt.TokenExpiredError) {
+      res.status(401).json( { message: "token expired" })
+    } else {
+      console.error(e);
+      res.status(500).send({ message: "Invalid Token" });
+    }
   }
 };

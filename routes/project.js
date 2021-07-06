@@ -9,6 +9,8 @@ router.post('/', auth,
     controller.createProject);
 router.get('/', auth, controller.getProjects);
 
+router.get('/recent', auth, controller.getRecentProjects);
+
 router.put('/', auth, sample);
 router.delete('/', auth, sample);
 router.get('/project_id/:project_id', auth, sample);

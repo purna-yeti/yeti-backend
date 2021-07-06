@@ -65,18 +65,18 @@ async function getProjects(token) {
     return res;
 }
 
-async function visitContent(projectId, uri, doc, token) {
+async function visitContent({projectId, uri, doc, title, hostname, pathname, search, token}) {
     let res = await chai.request(server)
         .post('/content/visit')
         .set('content-type', 'application/json')
         .set('token', token)
-        .send({ uri, doc, projectId });
+        .send({ uri, doc, title, hostname, pathname, search, projectId });
     return res;
 }
 
-async function statusContent(projectId, uri, doc, statusKey, statusValue, token) {
+async function statusContent({ projectId, uri, doc, title, hostname, pathname, search, statusKey, statusValue, token }) {
     let body = {
-        projectId, uri, doc
+        projectId, uri, doc, title, hostname, pathname, search,
     };
     body[statusKey] = statusValue;
     let res = await chai.request(server)
@@ -90,6 +90,20 @@ async function statusContent(projectId, uri, doc, statusKey, statusValue, token)
 async function getContentsByProject(projectId, token) {
     let res = await chai.request(server)
         .get(`/content/project/${projectId}`)
+        .set('token', token)
+    return res;
+}
+
+async function getRecentProjects(token) {
+    let res = await chai.request(server)
+        .get(`/project/recent`)
+        .set('token', token)
+    return res;
+}
+
+async function getProjectContents(projectId, token) {
+    let res = await chai.request(server)
+        .get(`/content/project_id/${projectId}`)
         .set('token', token)
     return res;
 }
@@ -148,44 +162,135 @@ describe('Integration test 0', () => {
         assert(project.status === 201);
         project = await createProject(team.body.id, "project japan second", users[0].body.token);
         assert(project.status === 201);
+        await createProject(team.body.id, "project singapore third", users[0].body.token);
         projects = await getProjects(users[1].body.token);
-        assert(projects.body.length == 2);
+        projects.body.sort((a, b) => a.id - b.id );
+        assert(projects.body.length == 3);
     });
 
     it('abel submit content to the project, bella views', async () => {
-        const uri = "https://www.youtube.com/results?search_query=lana+del+rey+radio";
-        const doc = "<html> </html>";
-        await visitContent(projects.body[0].id, 
-            uri, doc, 
-            users[0].body.token);
-        await visitContent(projects.body[0].id, 
-            uri, doc, 
-            users[1].body.token);
-        await visitContent(projects.body[0].id, 
-            uri, doc, 
-            users[0].body.token);
-        await visitContent(projects.body[1].id, 
-            uri, doc, 
-            users[0].body.token);
-        await statusContent(projects.body[0].id, uri, doc, 'isLike', true, users[0].body.token);
-        await statusContent(projects.body[0].id, uri, doc, 'isFavourite', true, users[0].body.token);
-        await statusContent(projects.body[0].id, uri, doc, 'isLike', false, users[0].body.token);
-        await statusContent(projects.body[0].id, uri, doc, 'isLike', true, users[1].body.token);
-        await statusContent(projects.body[0].id, uri, doc, 'isLike', true, users[1].body.token);
-        await statusContent(projects.body[0].id, uri, doc, 'isLike', true, users[0].body.token);
+        const contents = [
+            {
+                uri: "https://www.youtube.com/results?search_query=lana+del+rey+radio",
+                doc: "<html> </html>",
+                title: "Youtube search for Lana Del Ray Radio",
+                hostname: "www.youtube.com",
+                pathname: "results",
+                search: "search_query=lana+del+rey+radio"
+            },
+            {
+                uri: "https://www.coursera.org/search?query=fly",
+                doc: "<html> </html>",
+                title: "Coursera search for fly",
+                hostname: "www.coursera.org",
+                pathname: "search",
+                search: "query=fly"
+            },
+            {
+                uri: "https://www.google.com/search?q=teknologi",
+                doc: "<html> </html>",
+                title: "Google search for teknologi",
+                hostname: "www.google.com",
+                pathname: "search",
+                search: "q=teknologi"
+            }
+        ]
 
-        await statusContent(projects.body[1].id, uri, doc, 'isLike', true, users[1].body.token);
+        const visits = [
+            {
+                projectId: projects.body[0].id,
+                token: users[0].body.token,
+                ...contents[0]
+            },
+            {
+                projectId: projects.body[0].id,
+                token: users[0].body.token,
+                ...contents[0]
+            },
+            {
+                projectId: projects.body[0].id,
+                token: users[2].body.token,
+                ...contents[1]
+            },
+            {
+                projectId: projects.body[0].id,
+                token: users[0].body.token,
+                ...contents[2]
+            },
+            {
+                projectId: projects.body[0].id,
+                token: users[1].body.token,
+                ...contents[0]
+            },
+            {
+                projectId: projects.body[0].id,
+                token: users[0].body.token,
+                ...contents[1]
+            },
+        ]
 
-        await statusContent(projects.body[1].id, uri, doc, 'isFavourite', true, users[1].body.token);
-
-        content = await visitContent(projects.body[0].id, 
-            uri, doc, 
-            users[2].body.token);
-
-        console.log(content.body);
+        for (let visit of visits) {
+            let res = await visitContent(visit);
+            assert(res.status === 201);
+        }
+        
+        const statuses = [
+            {
+                projectId: projects.body[0].id,
+                statusKey: "isLike",
+                statusValue: true,
+                token: users[0].body.token,
+                ...contents[1]
+            },
+            {
+                projectId: projects.body[0].id,
+                statusKey: "isLike",
+                statusValue: false,
+                token: users[0].body.token,
+                ...contents[1]
+            },
+            {
+                projectId: projects.body[0].id,
+                statusKey: "isDislike",
+                statusValue: true,
+                token: users[1].body.token,
+                ...contents[1]
+            },
+            {
+                projectId: projects.body[0].id,
+                statusKey: "isDislike",
+                statusValue: true,
+                token: users[2].body.token,
+                ...contents[1]
+            },
+            {
+                projectId: projects.body[0].id,
+                statusKey: "isFavourite",
+                statusValue: true,
+                token: users[0].body.token,
+                ...contents[0]
+            },
+            {
+                projectId: projects.body[0].id,
+                statusKey: "isFavourite",
+                statusValue: true,
+                token: users[1].body.token,
+                ...contents[0]
+            },
+        ]
+        for (let status of statuses) {
+            let res = await statusContent(status);
+            assert(res.status === 201);
+        }
 
     });
     
+    it('get recent project', async () => {
+        let recentProjects = await getRecentProjects(users[0].body.token);
+        assert(recentProjects.status === 200);
+        let projectContents = await getProjectContents(projects.body[0].id, users[1].body.token);
+        assert(projectContents.status === 200);
+    });
     
     // });
     

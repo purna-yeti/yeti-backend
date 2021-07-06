@@ -107,7 +107,7 @@ router.get('/profile', auth, getProfile);
       const { email, password } = req.body;
       try {
         let user = await User.findOne({
-          email
+          where: {email}
         });
         if (!user)
           return res.status(400).json({
@@ -125,6 +125,8 @@ router.get('/profile', auth, getProfile);
             id: user.id
           }
         };
+
+        // console.log("JWT login: ", payload, process.env.secretKey);
   
         jwt.sign(
           payload,
