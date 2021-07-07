@@ -241,6 +241,24 @@
         }
       }
     },
+    "/project/recent": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/project/project_id/{project_id}": {
       "get": {
         "tags": [],
@@ -317,7 +335,16 @@
                 "uri": {
                   "example": "any"
                 },
-                "doc": {
+                "title": {
+                  "example": "any"
+                },
+                "hostname": {
+                  "example": "any"
+                },
+                "pathname": {
+                  "example": "any"
+                },
+                "search": {
                   "example": "any"
                 },
                 "projectId": {
@@ -328,6 +355,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Created"
           },
@@ -366,7 +396,16 @@
                 "uri": {
                   "example": "any"
                 },
-                "doc": {
+                "title": {
+                  "example": "any"
+                },
+                "hostname": {
+                  "example": "any"
+                },
+                "pathname": {
+                  "example": "any"
+                },
+                "search": {
                   "example": "any"
                 },
                 "projectId": {
@@ -377,6 +416,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Created"
           },
@@ -403,7 +445,16 @@
                 "uri": {
                   "example": "any"
                 },
-                "doc": {
+                "title": {
+                  "example": "any"
+                },
+                "hostname": {
+                  "example": "any"
+                },
+                "pathname": {
+                  "example": "any"
+                },
+                "search": {
                   "example": "any"
                 },
                 "projectId": {
@@ -440,7 +491,16 @@
                 "uri": {
                   "example": "any"
                 },
-                "doc": {
+                "title": {
+                  "example": "any"
+                },
+                "hostname": {
+                  "example": "any"
+                },
+                "pathname": {
+                  "example": "any"
+                },
+                "search": {
                   "example": "any"
                 },
                 "projectId": {
@@ -453,6 +513,31 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/content/project_id/{project_id}": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "401": {
             "description": "Unauthorized"
@@ -516,31 +601,6 @@
         "parameters": [
           {
             "name": "content_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/content/project_id/{project_id}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "project_id",
             "in": "path",
             "required": true,
             "type": "string"
