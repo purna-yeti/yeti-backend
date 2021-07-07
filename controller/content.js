@@ -7,7 +7,6 @@ const Content = models.Content;
 const ContentVisit = models.ContentVisit;
 const ContentStatus = models.ContentStatus;
 const { check } = require("express-validator");
-const { assert } = require('chai');
 const { QueryTypes } = require('sequelize');
 const helper = require('./helper');
 
@@ -26,9 +25,6 @@ exports.checkCreateContent = [
         .not()
         .isEmpty(),
     check("search", "Please input correct title")
-        .not()
-        .isEmpty(),
-    check("doc", "Please input correct doc")
         .not()
         .isEmpty(),
     check("projectId", "Please input correct projectId")
@@ -55,7 +51,7 @@ exports.visitContent = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
             console.log(`${prefix}: create new visit content`);
-            const { uri, doc, title, hostname, pathname, search, projectId } = req.body;
+            const { uri, title, hostname, pathname, search, projectId } = req.body;
             const userId = req.user.id;
             if (!await authToCreateContent(req.user.id, projectId)) {
                 res.status(401).json(
@@ -71,7 +67,7 @@ exports.visitContent = async (req, res) => {
             if (!content) {
                 content = await Content.create(
                     {
-                        uri, doc, title, hostname, pathname, search, 
+                        uri, title, hostname, pathname, search, 
                     }
                 )
             }
@@ -109,7 +105,7 @@ exports.statusContent = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
             console.log(`${prefix}: update content status`);
-            const { uri, doc, title, hostname, pathname, search, projectId } = req.body;
+            const { uri, title, hostname, pathname, search, projectId } = req.body;
             const userId = req.user.id;
             if (!await authToCreateContent(req.user.id, projectId)) {
                 res.status(401).json(
@@ -125,7 +121,7 @@ exports.statusContent = async (req, res) => {
             if (!content) {
                 content = await Content.create(
                     {
-                        uri, doc, title, hostname, pathname, search, 
+                        uri, title, hostname, pathname, search, 
                     }
                 );
             }
@@ -147,7 +143,9 @@ exports.statusContent = async (req, res) => {
             if (req.body.isLike !== undefined) status.isLike = req.body.isLike;
             else if (req.body.isDislike !== undefined) status.isDislike = req.body.isDislike;
             else if (req.body.isFavourite !== undefined) status.isFavourite = req.body.isFavourite;
-            else assert(false, `&{PREFIX}: content does not have status update`);
+            else res.status(500).json({
+                msg: `${PREFIX}: content does not have status update`
+            });
             await status.save();
             res.status(201).json(status);
         })
@@ -174,11 +172,25 @@ async function getContentStats(userId, contentId, projectId) {
         WHERE projectId=${projectId} AND contentId=${contentId}
         `,
         { type: QueryTypes.SELECT });
+    const userStatus = await ContentStatus.findOne({
+        where: {
+            userId,
+            contentId,
+            projectId
+        }
+    })
     const resp = {
-        isLike: status[0].isLike,
-        isDislike: status[0].isDislike,
-        isFavourite: status[0].isFavourite,
-        visit: visit[0].visit,
+        team: {
+            isLike: status[0].isLike,
+            isDislike: status[0].isDislike,
+            isFavourite: status[0].isFavourite,
+            visit: visit[0].visit,
+        },
+        user: {
+            isLike: userStatus.isLike,
+            isDislike: userStatus.isDislike,
+            isFavourite: userStatus.isFavourite,
+        }
     }
     return resp;
 }

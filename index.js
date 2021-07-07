@@ -7,13 +7,13 @@ const cors = require('cors');
 let ENV = 'dev';
 switch(process.env.NODE_ENV) {
 	case 'test':
-	  	require('dotenv').config({ path: './.env_test'})
-	  	break;
+		require('dotenv').config({ path: './.env_test'})
+		break;
 	case 'dev':
 		require('dotenv').config({ path: './.env'})
 		break;
 	default:
-		console.log(`ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
+		console.log(`XXX ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
 		require('dotenv').config({ path: './.env'})
 }
 

@@ -24,9 +24,6 @@ const content = (sequelize, DataTypes) => {
     title: {
       type: DataTypes.STRING,
     },
-    doc: {
-      type: DataTypes.TEXT,
-    },
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

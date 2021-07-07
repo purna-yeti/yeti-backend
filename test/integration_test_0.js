@@ -65,18 +65,18 @@ async function getProjects(token) {
     return res;
 }
 
-async function visitContent({projectId, uri, doc, title, hostname, pathname, search, token}) {
+async function visitContent({projectId, uri, title, hostname, pathname, search, token}) {
     let res = await chai.request(server)
         .post('/content/visit')
         .set('content-type', 'application/json')
         .set('token', token)
-        .send({ uri, doc, title, hostname, pathname, search, projectId });
+        .send({ uri, title, hostname, pathname, search, projectId });
     return res;
 }
 
-async function statusContent({ projectId, uri, doc, title, hostname, pathname, search, statusKey, statusValue, token }) {
+async function statusContent({ projectId, uri, title, hostname, pathname, search, statusKey, statusValue, token }) {
     let body = {
-        projectId, uri, doc, title, hostname, pathname, search,
+        projectId, uri, title, hostname, pathname, search,
     };
     body[statusKey] = statusValue;
     let res = await chai.request(server)
@@ -172,7 +172,6 @@ describe('Integration test 0', () => {
         const contents = [
             {
                 uri: "https://www.youtube.com/results?search_query=lana+del+rey+radio",
-                doc: "<html> </html>",
                 title: "Youtube search for Lana Del Ray Radio",
                 hostname: "www.youtube.com",
                 pathname: "results",
@@ -180,7 +179,6 @@ describe('Integration test 0', () => {
             },
             {
                 uri: "https://www.coursera.org/search?query=fly",
-                doc: "<html> </html>",
                 title: "Coursera search for fly",
                 hostname: "www.coursera.org",
                 pathname: "search",
@@ -188,7 +186,6 @@ describe('Integration test 0', () => {
             },
             {
                 uri: "https://www.google.com/search?q=teknologi",
-                doc: "<html> </html>",
                 title: "Google search for teknologi",
                 hostname: "www.google.com",
                 pathname: "search",

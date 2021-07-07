@@ -12,17 +12,26 @@ switch(process.env.NODE_ENV) {
     break;
 	case 'dev':
 		require('dotenv').config({ path: './.env'})
-    params.host = `cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    params.host = `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
     params.dialect = process.env.DIALECT;
+    params.dialectOptions = {
+      socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    }
 		break;
 	default:
-		console.log(`ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
+		console.log(`models: ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
 		require('dotenv').config({ path: './.env'})
-    params.host = `cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    params.host = `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
     params.dialect = process.env.DIALECT;
+    params.dialectOptions = {
+      socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    }
 }
 
-
+console.log(process.env.DATABASE,
+  process.env.DATABASE_USER,
+  process.env.DATABASE_PASSWORD,
+  params)
 const sequelize = new Sequelize(
   process.env.DATABASE,
   process.env.DATABASE_USER,
