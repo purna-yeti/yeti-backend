@@ -163,5 +163,5 @@ async function getRecentProjectsHelper(userId) {
       `, 
       { type: QueryTypes.SELECT });
   
-  return Object.assign({}, ...visit.map((x) => ({[x.projectId]: x.lastVisitAt})));;
+  return Object.assign({}, ...visit.map((x) => ({[x.projectId]: x.lastVisitAt})));
 }

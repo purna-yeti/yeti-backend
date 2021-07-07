@@ -251,6 +251,13 @@ describe('Integration test 0', () => {
             },
             {
                 projectId: projects.body[0].id,
+                statusKey: "isLike",
+                statusValue: true,
+                token: users[0].body.token,
+                ...contents[2]
+            },
+            {
+                projectId: projects.body[0].id,
                 statusKey: "isDislike",
                 statusValue: true,
                 token: users[1].body.token,

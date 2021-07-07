@@ -1,26 +1,27 @@
 const Sequelize = require('sequelize');
 const { validationResult } = require("express-validator");
 
+let params = {};
 let ENV = 'dev';
 switch(process.env.NODE_ENV) {
 	case 'test':
-	  	require('dotenv').config({ path: './.env_test'})
-	  	break;
+    require('dotenv').config({ path: './.env_test'})
+    params.storage = process.env.DATABASE;
+    params.logging = false;
+    params.dialect = process.env.DIALECT;
+    break;
 	case 'dev':
 		require('dotenv').config({ path: './.env'})
+    params.host = `cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    params.dialect = process.env.DIALECT;
 		break;
 	default:
 		console.log(`ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
 		require('dotenv').config({ path: './.env'})
+    params.host = `cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    params.dialect = process.env.DIALECT;
 }
 
-let params = {
-  dialect: process.env.DIALECT,
-}
-if (process.env.NODE_ENV === 'test') {
-  params.storage = process.env.DATABASE;
-  params.logging = false;
-}
 
 const sequelize = new Sequelize(
   process.env.DATABASE,

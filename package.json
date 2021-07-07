@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha --timeout 10000",
-    "start": "NODE_ENV=test nodemon index.js"
+    "start": "NODE_ENV=dev nodemon index.js"
   },
   "engines": {
     "node": ">= 12.0.0"

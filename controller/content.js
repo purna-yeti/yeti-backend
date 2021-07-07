@@ -165,7 +165,7 @@ async function getContentStats(userId, contentId, projectId) {
             sum(isDislike) as isDislike,
             sum(isFavourite) as isFavourite
         FROM contentStatuses
-        WHERE projectId=${projectId}
+        WHERE projectId=${projectId} AND contentId=${contentId}
         `,
         { type: QueryTypes.SELECT });
     const visit = await sequelize.query(`
@@ -174,7 +174,13 @@ async function getContentStats(userId, contentId, projectId) {
         WHERE projectId=${projectId} AND contentId=${contentId}
         `,
         { type: QueryTypes.SELECT });
-    return { status, visit };
+    const resp = {
+        isLike: status[0].isLike,
+        isDislike: status[0].isDislike,
+        isFavourite: status[0].isFavourite,
+        visit: visit[0].visit,
+    }
+    return resp;
 }
 
 exports.getProjectContent = async (req, res) => {
