@@ -179,7 +179,6 @@ async function getContentStats(userId, contentId, projectId) {
             projectId
         }
     });
-    console.log("XXX", userStatus);
     const resp = {
         team: {
             isLike: parseInt(status[0].islike || 0),
@@ -245,7 +244,6 @@ exports.getProjectContent = async (req, res) => {
                     isFavourite: parseInt(s.isfavourite || 0),
                 });
             }
-            console.log("XXX", resp);
             res.status(200).json(resp);
         })
 
