@@ -1,0 +1,15 @@
+POST https://yeti-backend-v5omsitsja-uc.a.run.app/content/visit
+content-type: application/json
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxfSwiaWF0IjoxNjI1NjcxNTI0LCJleHAiOjE2MjU2NzUxMjR9.m7IlIyNklsCZ5TCVKNUk8LjWiAenIobK7Z51vlW5EuQ
+
+{
+    "uri": "https://www.google.com/search?q=teknologi",
+    "title": "Google search for teknologi",
+    "hostname": "www.google.com",
+    "pathname": "search",
+    "search": "q=teknologi",
+    "projectId": 1
+}
+
+
+

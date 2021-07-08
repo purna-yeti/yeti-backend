@@ -1,0 +1,11 @@
+POST http://localhost:8000/project
+content-type: application/json
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxfSwiaWF0IjoxNjI1NzA0OTQ0LCJleHAiOjE2MjU3MDg1NDR9.6RKAlQDE5ipZkEP2z969vt98fu2ZDWFHGAe3EpQ9uvk
+
+{
+    "name": "project by team 2",
+    "teamId": 2
+}
+
+
+

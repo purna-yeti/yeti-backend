@@ -111,7 +111,7 @@ exports.getRecentProjects = async(req, res) => {
       const now = new Date();
       let projects = [];
       for (let tu of teamUsers) {
-        const teamName = tu.team.name;
+        let teamName = tu.team.name;
         for (let project of tu.team.projects) {
           projects.push({
             projectId: project.id,
@@ -127,7 +127,7 @@ exports.getRecentProjects = async(req, res) => {
       projects.sort((a,b) => {
         if (a.lastVisitAt === null) return 1;
         if (b.lastVisitAt === null) return -1;
-        return b.lastVisitAt - a.lastVisitAt;
+        return new Date(b.lastVisitAt) - new Date(a.lastVisitAt);
       });
       if (projects.length > 0) projects[0].checked = true;
       res.status(200).json(projects);
@@ -156,12 +156,12 @@ exports.deleteProject = (req, res, next) => {
 
 async function getRecentProjectsHelper(userId) {
   const visit = await sequelize.query(`
-      SELECT projectId, max(updatedAt) as lastVisitAt
-      FROM contentVisits
-      WHERE userId=${userId}
-      GROUP BY projectId
+      SELECT "projectId", max("updatedAt") as lastvisitat
+      FROM public."contentVisits"
+      WHERE "userId"=${userId}
+      GROUP BY "projectId"
       `, 
       { type: QueryTypes.SELECT });
   
-  return Object.assign({}, ...visit.map((x) => ({[x.projectId]: x.lastVisitAt})));
+  return Object.assign({}, ...visit.map((x) => ({[x.projectId]: x.lastvisitat})));
 }

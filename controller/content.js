@@ -158,18 +158,18 @@ exports.statusContent = async (req, res) => {
 
 async function getContentStats(userId, contentId, projectId) {
     const status = await sequelize.query(`
-        SELECT projectId, 
-            sum(isLike) as isLike,
-            sum(isDislike) as isDislike,
-            sum(isFavourite) as isFavourite
-        FROM contentStatuses
-        WHERE projectId=${projectId} AND contentId=${contentId}
+        SELECT
+            COUNT(CASE WHEN "isLike" THEN 1 END)  as islike,
+            COUNT(CASE WHEN "isDislike" THEN 1 END)  as isdislike,
+            COUNT(CASE WHEN "isFavourite" THEN 1 END)  as isfavourite
+        FROM public."contentStatuses"
+        WHERE "projectId"=${projectId} AND "contentId"=${contentId}
         `,
         { type: QueryTypes.SELECT });
     const visit = await sequelize.query(`
         SELECT count(*) as visit
-        FROM contentVisits
-        WHERE projectId=${projectId} AND contentId=${contentId}
+        FROM public."contentVisits"
+        WHERE "projectId"=${projectId} AND "contentId"=${contentId}
         `,
         { type: QueryTypes.SELECT });
     const userStatus = await ContentStatus.findOne({
@@ -178,18 +178,19 @@ async function getContentStats(userId, contentId, projectId) {
             contentId,
             projectId
         }
-    })
+    });
+    console.log("XXX", userStatus);
     const resp = {
         team: {
-            isLike: status[0].isLike,
-            isDislike: status[0].isDislike,
-            isFavourite: status[0].isFavourite,
-            visit: visit[0].visit,
+            isLike: parseInt(status[0].islike || 0),
+            isDislike: parseInt(status[0].isdislike || 0),
+            isFavourite: parseInt(status[0].isfavourite || 0),
+            visit: parseInt(visit[0].visit),
         },
         user: {
-            isLike: userStatus.isLike,
-            isDislike: userStatus.isDislike,
-            isFavourite: userStatus.isFavourite,
+            isLike: userStatus.isLike? 1: 0,
+            isDislike: userStatus.isDislike? 1: 0,
+            isFavourite: userStatus.isFavourite? 1: 0,
         }
     }
     return resp;
@@ -197,27 +198,33 @@ async function getContentStats(userId, contentId, projectId) {
 
 exports.getProjectContent = async (req, res) => {
     const projectId = parseInt(req.params.project_id);
-    const prefix = `GET /project_id/${projectId}`;
+    const prefix = `GET content/project_id/${projectId}`;
     try {
         await sequelize.transaction(async (t) => {
             console.log(`${prefix}: get content project by projectId ${projectId}`);
             let status = await sequelize.query(`
-                SELECT cs.contentId, 
-                    sum(cs.isLike) as isLike, 
-                    sum(cs.isDislike) as isDislike,
-                    sum(cs.isFavourite) as isFavourite 
-                FROM contentStatuses cs 
-                WHERE cs.projectId=${projectId}
-                GROUP BY cs.contentId
-                ORDER BY isFavourite DESC, isLike DESC, isDislike ASC
+                SELECT * 
+                FROM (SELECT "contentId", 
+                    COUNT(CASE WHEN "isLike" THEN 1 END)  as islike,
+                    COUNT(CASE WHEN "isDislike" THEN 1 END)  as isdislike,
+                    COUNT(CASE WHEN "isFavourite" THEN 1 END)  as isfavourite
+                FROM public."contentStatuses" 
+                WHERE "projectId"=${projectId}
+                GROUP BY "contentId") a
+                ORDER BY isfavourite DESC, islike DESC, isdislike ASC
             `,
                 { type: QueryTypes.SELECT });
         
             let visits = await sequelize.query(`
-                SELECT cv.contentId, max(cv.updatedAt) as lastVisitAt, count(cv.updatedAt) as visit, c.*
-                FROM contentVisits cv join contents c on cv.contentId=c.id
-                WHERE cv.projectId=${projectId}
-                GROUP BY cv.contentId
+                SELECT cv."contentId", 
+                    max(cv."updatedAt") as lastvisitat, 
+                    count(cv."updatedAt") as visit, 
+                    min(c."title") as title, 
+                    min(c."uri") as uri, 
+                    min(c."hostname") as hostname
+                FROM public."contentVisits" cv join public."contents" c on cv."contentId"=c."id"
+                WHERE cv."projectId"=${projectId}
+                GROUP BY cv."contentId"
             `,
                 { type: QueryTypes.SELECT });
             visits = Object.assign({}, ...visits.map((x) => ({
@@ -231,13 +238,14 @@ exports.getProjectContent = async (req, res) => {
                     contentTitle: visits[s.contentId].title,
                     contentUri: visits[s.contentId].uri,
                     contentHostname: visits[s.contentId].hostname,
-                    lastVisitAt: visits[s.contentId].lastVisitAt,
-                    lastVisitAtText: helper.getLastVisitText(now, new Date(visits[s.contentId].lastVisitAt)),
-                    isLike: s.isLike,
-                    isDislike: s.isDislike,
-                    isFavourite: s.isFavourite,
-                })
+                    lastVisitAt: visits[s.contentId].lastvisitat,
+                    lastVisitAtText: helper.getLastVisitText(now, new Date(visits[s.contentId].lastvisitat)),
+                    isLike: parseInt(s.islike || 0),
+                    isDislike: parseInt(s.isdislike || 0),
+                    isFavourite: parseInt(s.isfavourite || 0),
+                });
             }
+            console.log("XXX", resp);
             res.status(200).json(resp);
         })
 

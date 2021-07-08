@@ -1,7 +1,8 @@
-POST https://yeti-backend-v5omsitsja-uc.a.run.app/team
+PUT https://yeti-backend-v5omsitsja-uc.a.run.app/team/request/approve
 content-type: application/json
 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxfSwiaWF0IjoxNjI1NjY4NTAxLCJleHAiOjE2MjU2NzIxMDF9.dv_AV6JXMwp_7ss5_Tv0IrXQU90W143eHUTiZoTRBEA
 
 {
-    "team": "pre-alpha"
+    "id": 2
 }
+

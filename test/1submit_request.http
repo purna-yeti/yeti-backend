@@ -1,0 +1,8 @@
+PUT https://yeti-backend-v5omsitsja-uc.a.run.app/team/request
+content-type: application/json
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyfSwiaWF0IjoxNjI1NjcwNDU1LCJleHAiOjE2MjU2NzQwNTV9.4UKISHRKTpm2tPFZTqH6xDGCVKFMyGjMZyf52W_anIA
+
+{
+    "userRole": "EDITOR",
+    "teamId": 1
+}

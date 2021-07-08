@@ -18,6 +18,12 @@ switch(process.env.NODE_ENV) {
       socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`
     }
 		break;
+  case 'local':
+    require('dotenv').config({ path: './.env_local'})
+    params.host = `127.0.0.1`;
+    params.port = 5433;
+    params.dialect = process.env.DIALECT;
+    break;
 	default:
 		console.log(`models: ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
 		require('dotenv').config({ path: './.env'})

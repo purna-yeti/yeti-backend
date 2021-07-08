@@ -12,8 +12,11 @@ switch(process.env.NODE_ENV) {
 	case 'dev':
 		require('dotenv').config({ path: './.env'})
 		break;
+	case 'local':
+		require('dotenv').config({ path: './.env_local'})
+		break;
 	default:
-		console.log(`XXX ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
+		console.log(`INDEX.JS ENV ${process.env.NODE_ENV} is not recognized, running dev instead`);
 		require('dotenv').config({ path: './.env'})
 }
 
