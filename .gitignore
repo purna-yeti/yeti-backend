@@ -1,5 +1,7 @@
 credentials/*
-*env_*
+.env
+.env_local
+.env_test
 
 # Logs
 logs
