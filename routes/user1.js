@@ -71,7 +71,7 @@ router.get('/profile', auth, getProfile);
           payload,
           process.env.secretKey,
           {
-            expiresIn: 10000
+            expiresIn: 100000
           },
           (err, token) => {
             if (err) throw err;

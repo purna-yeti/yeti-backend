@@ -211,6 +211,7 @@ exports.getProjectContent = async (req, res) => {
                 WHERE "projectId"=${projectId}
                 GROUP BY "contentId") a
                 ORDER BY isfavourite DESC, islike DESC, isdislike ASC
+                LIMIT 25
             `,
                 { type: QueryTypes.SELECT });
         
@@ -232,17 +233,20 @@ exports.getProjectContent = async (req, res) => {
             const now = new Date();
             let resp = [];
             for (let s of status) {
-                resp.push({
-                    contentId: visits[s.contentId].contentId,
-                    contentTitle: visits[s.contentId].title,
-                    contentUri: visits[s.contentId].uri,
-                    contentHostname: visits[s.contentId].hostname,
-                    lastVisitAt: visits[s.contentId].lastvisitat,
-                    lastVisitAtText: helper.getLastVisitText(now, new Date(visits[s.contentId].lastvisitat)),
-                    isLike: parseInt(s.islike || 0),
-                    isDislike: parseInt(s.isdislike || 0),
-                    isFavourite: parseInt(s.isfavourite || 0),
-                });
+                if (s.islike || s.dislike || s.isfavourite) {
+                    resp.push({
+                        contentId: visits[s.contentId].contentId,
+                        contentTitle: visits[s.contentId].title,
+                        contentUri: visits[s.contentId].uri,
+                        contentHostname: visits[s.contentId].hostname,
+                        lastVisitAt: visits[s.contentId].lastvisitat,
+                        lastVisitAtText: helper.getLastVisitText(now, new Date(visits[s.contentId].lastvisitat)),
+                        isLike: parseInt(s.islike || 0),
+                        isDislike: parseInt(s.isdislike || 0),
+                        isFavourite: parseInt(s.isfavourite || 0),
+                    });
+                }
+                
             }
             res.status(200).json(resp);
         })

@@ -6,7 +6,7 @@ const content = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
     },
     uri: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(2048),
       unique: true,
       validate: {
         notEmpty: true,

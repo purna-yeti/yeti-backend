@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const cors = require('cors');
 
 let ENV = 'dev';
@@ -38,12 +38,12 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger-output.json');
 
 
-mongoose
-	.connect(process.env.DEV_DB, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true})
-	.then(()=> console.log('Mongo DB Connected'))
-	.catch(err=>{
-		console.log(err);
-	})
+// mongoose
+// 	.connect(process.env.DEV_DB, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true})
+// 	.then(()=> console.log('Mongo DB Connected'))
+// 	.catch(err=>{
+// 		console.log(err);
+// 	})
 
 app.use(morgan('dev'));
 app.use(bodyParser.json({limit: '200mb', extended: true}));
@@ -59,6 +59,15 @@ app.use('/search', search);
 app.use('/friendship', friendship);
 app.use('/recommend', recommend);
 app.use('/', pubsub);
+
+
+// async function loadData() {
+// 	let wira = await models.User.create({
+// 		username: 
+// 		email:
+
+// 	})
+// }
 
 const port = process.env.PORT || 8000;
 sequelize.sync().then(async () => {
