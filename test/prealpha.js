@@ -5,7 +5,7 @@ let server = require('../index');
 const { assert } = require('chai');
 chai.use(chaiHttp);
 process.env.NODE_ENV = "local";
-
+const restart = true;
 
 const owner = {
     email: "purnawirman@yeti-hunt.com",
@@ -67,15 +67,23 @@ let users = [
         password: 'password',
         teamId: 1
     },
-]
-users = [
     {
         email: "sugarpuff77@gmail.com",
         username: 'sugarpuff',
         password: 'password',
         teamId: 1
+    },
+    {
+        email: "timtreasure4@gmail.com",
+        username: 'timtreasure4',
+        password: 'password',
+        teamId: 1
     }
-];
+]
+// users = [
+    
+// ];
+if (restart) { users = [] };
 let teams = [
     {
         name: 'pre-alpha 0'
@@ -200,15 +208,24 @@ async function getProjectContents(projectId, token) {
 describe('Pre alpha test 0', () => {
     before('clean up ', async function () {
         console.log('before');
-        // await sequelize.sync({force: false})
-        console.log("sequelize force as true");
+        if (restart) {
+          await sequelize.sync({force: true})
+          console.log("sequelize force as true");
+        }
+        
     });
     it('load all', async () => {
-        // let ownerResp = await signup(owner.username, owner.email, owner.password);
-        let ownerResp = await login(owner.username, owner.email, owner.password);
+        let ownerResp;
+        if (restart) {
+          ownerResp = await signup(owner.username, owner.email, owner.password);
+        } else {
+          ownerResp = await login(owner.username, owner.email, owner.password);
+        }
         const ownerToken = ownerResp.body.token;
-        // for (let t of teams) await createTeam(t.name, ownerToken);
-        // for (let p of projects) await createProject(p.teamId, p.name, ownerToken);
+        if (restart) {
+          for (let t of teams) await createTeam(t.name, ownerToken);
+          for (let p of projects) await createProject(p.teamId, p.name, ownerToken);
+        }
         for (let u of users) {
             let userResp = await signup(u.username, u.email, u.password);
             userResp = await login(u.username, u.email, u.password);

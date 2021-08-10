@@ -51,6 +51,7 @@ const models = {
   Message: require('./message')(sequelize, Sequelize.DataTypes),
   Project: require('./project')(sequelize, Sequelize.DataTypes),
   Content: require('./content')(sequelize, Sequelize.DataTypes),
+  AnalyzedContent: require('./analyzedContent')(sequelize, Sequelize.DataTypes),
   TeamUser: require('./teamUser')(sequelize, Sequelize.DataTypes),
   UserProject: require('./userProject')(sequelize, Sequelize.DataTypes),
   ContentVisit: require('./contentVisit')(sequelize, Sequelize.DataTypes),

@@ -19,7 +19,7 @@ router.get('/profile', auth, getProfile);
  * @description - User SignUp
  */
  router.post(
-    "/signup",
+    "/signup", 
     [
       check("username", "Please Enter a Valid Username")
         .not()
@@ -71,7 +71,7 @@ router.get('/profile', auth, getProfile);
           payload,
           process.env.secretKey,
           {
-            expiresIn: 100000
+            expiresIn: 1000000
           },
           (err, token) => {
             if (err) throw err;
@@ -132,7 +132,7 @@ router.get('/profile', auth, getProfile);
           payload,
           process.env.secretKey,
           {
-            expiresIn: 3600
+            expiresIn: 1000000 
           },
           (err, token) => {
             if (err) throw err;

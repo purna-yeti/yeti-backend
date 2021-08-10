@@ -163,5 +163,7 @@ async function getRecentProjectsHelper(userId) {
       `, 
       { type: QueryTypes.SELECT });
   
+  console.log("XXXXX", visit);
+  
   return Object.assign({}, ...visit.map((x) => ({[x.projectId]: x.lastvisitat})));
 }

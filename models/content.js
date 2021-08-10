@@ -21,6 +21,9 @@ const content = (sequelize, DataTypes) => {
     search: {
       type: DataTypes.STRING,
     },
+    hash: {
+      type: DataTypes.STRING,
+    },
     title: {
       type: DataTypes.STRING,
     },
@@ -30,13 +33,29 @@ const content = (sequelize, DataTypes) => {
       validate: {
         notEmpty: true,
       },
-    }
+    },
+    analyzedContentId: {
+      type: DataTypes.INTEGER,
+      primaryKey: false,
+      references: {
+        model: 'analyzedContents',
+        key: 'id'
+      },
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+      onDelete: 'cascade',
+      onUpdate: 'cascade',
+    },
   }
   );
 
   Content.associate = (models) => {
     Content.belongsToMany(models.User, { through: models.ContentStatus });
     Content.belongsToMany(models.Project, { through: models.ContentStatus });
+    Content.belongsTo(models.AnalyzedContent);
+
   };
 
   return Content;

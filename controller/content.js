@@ -6,25 +6,29 @@ const User = models.User;
 const Content = models.Content;
 const ContentVisit = models.ContentVisit;
 const ContentStatus = models.ContentStatus;
+const AnalyzedContent = models.AnalyzedContent;
 const { check } = require("express-validator");
 const { QueryTypes } = require('sequelize');
 const helper = require('./helper');
-
+const { getAnalyzedContent } = require('./analyzedContent');
 
 exports.checkCreateContent = [
     check("uri", "Please input correct uri")
         .not()
         .isEmpty(),
-    check("title", "Please input correct title")
+    check("title", "Please input uri title")
         .not()
         .isEmpty(),
-    check("hostname", "Please input correct title")
+    check("hostname", "Please input uri hostname")
         .not()
         .isEmpty(),
-    check("pathname", "Please input correct title")
+    check("pathname", "Please input uri pathname")
         .not()
         .isEmpty(),
-    check("search", "Please input correct title")
+    check("search", "Please input uri search")
+        .not()
+        .isEmpty(),
+    check("hash", "Please input hash")
         .not()
         .isEmpty(),
     check("projectId", "Please input correct projectId")
@@ -50,15 +54,35 @@ exports.visitContent = async (req, res) => {
     const prefix = "POST /content/visit";
     try {
         await sequelize.transaction(async (t) => {
+            /**
+             * check if the content visited is not yet created (after analyzed)
+             * if yes, create a new analyzed content, then proceed to create the content
+             * if no, use existing analyzed content, then proceed to check if content existed, and continue same process
+             */
             console.log(`${prefix}: create new visit content`);
-            const { uri, title, hostname, pathname, search, projectId } = req.body;
+            const { uri, title, hostname, pathname, search, projectId, hash } = req.body;
             const userId = req.user.id;
             if (!await authToCreateContent(req.user.id, projectId)) {
                 res.status(401).json(
                     { msg: "user is not authorized to create content" }
                 );
             }
-
+            let clean_url = getAnalyzedContent(uri);
+            let analyzedContent = await AnalyzedContent.findOne(
+                {
+                    where: { clean_uri: clean_url.href }
+                }
+            )
+            if (!analyzedContent) {
+                analyzedContent = await AnalyzedContent.create(
+                    {
+                        clean_uri: clean_url.href,
+                        hostname: clean_url.hostname,
+                        pathname: clean_url.pathname,
+                        search: clean_url.search
+                    }
+                )
+            }
             let content = await Content.findOne(
                 {
                     where: { uri }
@@ -67,10 +91,12 @@ exports.visitContent = async (req, res) => {
             if (!content) {
                 content = await Content.create(
                     {
-                        uri, title, hostname, pathname, search, 
+                        uri, title, hostname, pathname, search, hash,
+                        analyzedContentId: analyzedContent.id,
                     }
                 )
             }
+
             let visit = await ContentVisit.create({
                 projectId,
                 userId,
@@ -105,7 +131,7 @@ exports.statusContent = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
             console.log(`${prefix}: update content status`);
-            const { uri, title, hostname, pathname, search, projectId } = req.body;
+            const { uri, title, hostname, pathname, search, hash, projectId } = req.body;
             const userId = req.user.id;
             if (!await authToCreateContent(req.user.id, projectId)) {
                 res.status(401).json(
@@ -121,7 +147,7 @@ exports.statusContent = async (req, res) => {
             if (!content) {
                 content = await Content.create(
                     {
-                        uri, title, hostname, pathname, search, 
+                        uri, title, hostname, pathname, search, hash
                     }
                 );
             }
